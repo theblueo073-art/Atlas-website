@@ -1,0 +1,6 @@
+# Add the exact dependencies used by your working ATLAS application.
+# Example packages (uncomment only if your code uses them):
+# Flask
+# python-dotenv
+# Flask-Login
+# pytest

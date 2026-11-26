@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ATLAS is an attack surface mapping and security intelligence platform.">
+    <title>ATLAS | Attack Surface Intelligence</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="landing">
+    <header class="landing-header">
+        <a class="brand" href="/" aria-label="ATLAS home">
+            <span class="brand-mark">A</span>
+            <span class="brand-name">ATLA<span>S</span></span>
+        </a>
+
+        <nav class="landing-nav" aria-label="Main navigation">
+            <a href="#about">About</a>
+            <a href="#features">Capabilities</a>
+            {% if session.get('user_id') %}
+                <a class="nav-cta" href="{{ url_for('dashboard') }}">Open Dashboard</a>
+                <form class="nav-logout" action="{{ url_for('logout') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button type="submit">Log out</button>
+                </form>
+            {% else %}
+                <a class="nav-login" href="{{ url_for('login') }}">Log in</a>
+                <a class="nav-cta" href="{{ url_for('signup') }}">Sign up</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="about">
+            <div>
+                <p class="eyebrow">ATTACK SURFACE INTELLIGENCE</p>
+                <h1>See your digital <span>attack surface.</span></h1>
+                <p class="hero-description">
+                    ATLAS helps organizations discover digital assets, identify exposed
+                    services, understand security risks, and prioritize remediation.
+                </p>
+                <div class="hero-actions">
+                    <a class="button button-primary" href="{{ url_for('signup') }}">Create your account</a>
+                    <a class="button button-secondary" href="#features">Explore Capabilities</a>
+                </div>
+            </div>
+
+            <aside class="surface-preview" aria-label="Platform preview">
+                <div class="preview-header">
+                    <span>Attack surface overview</span>
+                    <span class="preview-dot" aria-label="Active"></span>
+                </div>
+                <div class="preview-grid">
+                    <div class="preview-node"><strong>--</strong><span>DISCOVERED ASSETS</span></div>
+                    <div class="preview-node"><strong>--</strong><span>OPEN PORTS</span></div>
+                    <div class="preview-node"><strong>--</strong><span>DETECTED SERVICES</span></div>
+                    <div class="preview-node"><strong>--</strong><span>SECURITY FINDINGS</span></div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="features" id="features">
+            <div class="features-inner">
+                <article class="card">
+                    <span class="card-number">01</span>
+                    <h3>Asset Discovery</h3>
+                    <p>Discover and organize authorized network assets across your environment.</p>
+                </article>
+                <article class="card">
+                    <span class="card-number">02</span>
+                    <h3>Service Intelligence</h3>
+                    <p>Identify exposed ports, running services, technologies, and dependencies.</p>
+                </article>
+                <article class="card">
+                    <span class="card-number">03</span>
+                    <h3>Risk Assessment</h3>
+                    <p>Analyze potential exposures and prioritize the improvements that matter most.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="landing-footer">
+        ATLAS by The Blue Ocean | Authorized Security Intelligence
+    </footer>
+</body>
+</html>

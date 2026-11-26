@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Verify your email address for ATLAS.">
+    <title>Verify Email | ATLAS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body class="auth-page">
+
+    <header class="auth-header">
+        <a class="brand" href="/" aria-label="ATLAS home">
+            <span class="brand-mark">A</span>
+            <span class="brand-name">ATLA<span>S</span></span>
+        </a>
+        <a class="auth-back-link" href="/">Back to home</a>
+    </header>
+
+    <main class="auth-main">
+        <section class="auth-card" aria-labelledby="auth-title">
+
+            <p class="eyebrow">ATLAS SECURITY INTELLIGENCE</p>
+
+            <h1 id="auth-title">Verify your email</h1>
+
+            <p class="auth-description">
+                We've sent a six-digit verification code to
+                <strong>{{ email }}</strong>.
+                Enter the code below to activate your ATLAS account.
+            </p>
+
+            {% if error %}
+                <p class="auth-error" role="alert">{{ error }}</p>
+            {% endif %}
+
+            {% if message %}
+                <p class="auth-description" role="status">{{ message }}</p>
+            {% endif %}
+
+            <form class="auth-form" method="post" action="{{ url_for('verify_email') }}">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <label for="code">Verification code</label>
+
+                <input
+                    id="code"
+                    name="code"
+                    type="text"
+                    inputmode="numeric"
+                    pattern="[0-9]{6}"
+                    maxlength="6"
+                    minlength="6"
+                    autocomplete="one-time-code"
+                    placeholder="Enter 6-digit code"
+                    required
+                >
+
+                <button class="button button-primary auth-submit" type="submit">
+                    Verify email
+                </button>
+
+            </form>
+
+            <form class="auth-form" method="post" action="{{ url_for('resend_verification') }}">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <button class="social-button" type="submit">
+                    <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                    <span>Resend verification code</span>
+                </button>
+
+            </form>
+
+            <p class="auth-switch">
+                Already have an account?
+                <a href="{{ url_for('login') }}">Log in</a>
+            </p>
+
+        </section>
+    </main>
+
+</body>
+</html>

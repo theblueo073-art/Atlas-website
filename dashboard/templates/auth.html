@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ description }}">
+    <title>{{ title }} | ATLAS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="auth-page">
+    <header class="auth-header">
+        <a class="brand" href="/" aria-label="ATLAS home">
+            <span class="brand-mark">A</span>
+            <span class="brand-name">ATLA<span>S</span></span>
+        </a>
+        <a class="auth-back-link" href="/">Back to home</a>
+    </header>
+
+    <main class="auth-main">
+        <section class="auth-card" aria-labelledby="auth-title">
+            <p class="eyebrow">ATLAS SECURITY INTELLIGENCE</p>
+            <h1 id="auth-title">{{ title }}</h1>
+            <p class="auth-description">{{ description }}</p>
+
+            {% if error %}
+                <p class="auth-error" role="alert">{{ error }}</p>
+            {% endif %}
+
+            <form class="auth-form" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <input type="hidden" name="next" value="{{ next_url }}">
+
+                <label for="email">Email address</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    maxlength="254"
+                    value="{{ request.form.get('email', '') }}"
+                    required
+                >
+
+                <div class="password-label-row">
+                    <label for="password">Password</label>
+                    {% if submit_label == "Log in" %}
+                        <a class="forgot-password" href="{{ url_for('forgot_password') }}">Forgot password?</a>
+                    {% endif %}
+                </div>
+                <div class="password-field">
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autocomplete="{{ 'new-password' if submit_label == 'Create account' else 'current-password' }}"
+                        minlength="{{ 12 if submit_label == 'Create account' else 1 }}"
+                        maxlength="128"
+                        required
+                    >
+                    <button class="password-toggle" type="button" data-password-toggle="password" aria-label="Show password" aria-pressed="false">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path class="eye-slash" d="m3 3 18 18"></path>
+                        </svg>
+                    </button>
+                </div>
+                {% if submit_label == "Create account" %}
+                    <p class="auth-hint">Use at least 12 characters.</p>
+                {% endif %}
+
+                <button class="button button-primary auth-submit" type="submit">{{ submit_label }}</button>
+            </form>
+
+            <div class="social-auth" aria-label="Other sign-in options">
+                <a class="social-button" href="{{ url_for('social_login', provider='google') }}">
+                    <i class="fa-brands fa-google" aria-hidden="true"></i>
+                    <span>Continue with Google</span>
+                </a>
+                <a class="social-button" href="{{ url_for('social_login', provider='linkedin') }}">
+                    <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+                    <span>Continue with LinkedIn</span>
+                </a>
+            </div>
+
+            <p class="auth-switch">
+                {{ alternate_prompt }}
+                <a href="{{ alternate_url }}"> {{ alternate_label }}</a>
+            </p>
+        </section>
+    </main>
+    <script src="{{ url_for('static', filename='js/auth.js') }}" defer></script>
+</body>
+</html>
