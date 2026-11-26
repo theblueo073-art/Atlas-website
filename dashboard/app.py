@@ -1,4 +1,4 @@
-import base64
+﻿import base64
 import ipaddress
 import hashlib
 import hmac
@@ -21,6 +21,9 @@ from urllib.request import Request, urlopen
 import sys
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+from dotenv import load_dotenv
+
+load_dotenv(PROJECT_ROOT / ".env")
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -1254,3 +1257,4 @@ if __name__ == "__main__":
         port=5000,
         debug=os.environ.get("FLASK_DEBUG") == "1",
     )
+

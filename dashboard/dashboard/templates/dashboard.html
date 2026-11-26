@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ATLAS security intelligence dashboard.">
+    <title>ATLAS | Security Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="dashboard-body">
+    <aside class="sidebar">
+        <a class="brand" href="/" aria-label="ATLAS home">
+            <span class="brand-mark">A</span>
+            <span class="brand-name">ATLA<span>S</span></span>
+        </a>
+
+        <nav aria-label="Dashboard navigation">
+            <div class="nav-section">
+                <p class="nav-title">Main Menu</p>
+                <a class="nav-link" href="/"><span class="nav-icon">⌂</span>Home</a>
+                <a class="nav-link active" href="/dashboard" aria-current="page"><span class="nav-icon">◫</span>Overview</a>
+                <a class="nav-link" href="#"><span class="nav-icon">◇</span>Asset Discovery</a>
+                <a class="nav-link" href="#"><span class="nav-icon">≋</span>Port Scanning</a>
+                <a class="nav-link" href="#"><span class="nav-icon">▦</span>Service Enumeration</a>
+            </div>
+
+            <div class="nav-section">
+                <p class="nav-title">Security Intelligence</p>
+                <a class="nav-link" href="#"><span class="nav-icon">⌾</span>Attack Surface Map</a>
+                <a class="nav-link" href="#"><span class="nav-icon">△</span>Risk Assessment</a>
+                <a class="nav-link" href="#"><span class="nav-icon">!</span>Vulnerability Intelligence</a>
+            </div>
+
+            <div class="nav-section">
+                <p class="nav-title">Management</p>
+                <a class="nav-link" href="#"><span class="nav-icon">↺</span>Scan History</a>
+                <a class="nav-link" href="#"><span class="nav-icon">▤</span>Reports</a>
+                <a class="nav-link" href="#"><span class="nav-icon">⚙</span>Settings</a>
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <h1>Security Overview</h1>
+            <div class="topbar-actions">
+                <span class="status">Platform Online</span>
+                <form action="{{ url_for('logout') }}" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button class="logout-button" type="submit">Log out</button>
+                </form>
+            </div>
+        </header>
+
+        <section class="welcome" aria-labelledby="welcome-title">
+            <h2 id="welcome-title">Welcome to ATLAS</h2>
+            <p>Your centralized platform for authorized attack surface discovery, security intelligence, and risk visibility.</p>
+        </section>
+        
+        <section class="panel scan-panel">
+            <div class="panel-header">
+                <h3>Launch Security Scan</h3>
+                <span class="badge">Authorized Scanning</span>
+            </div>
+
+            <form action="{{ url_for('run_scan') }}" method="POST" class="scan-form">
+
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="form-group">
+                    <label for="target">Target IP, Network Range or Domain</label>
+                    <input
+                        type="text"
+                        id="target"
+                        name="target"
+                        placeholder="e.g. 192.168.56.101"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="scan_type">Select Scan Type</label>
+                    <select id="scan_type" name="scan_type" required>
+                        <option value="asset_discovery">Asset Discovery</option>
+                        <option value="host_discovery">Host Discovery</option>
+                        <option value="port_scanning">Port Scanning</option>
+                        <option value="service_enumeration">Service Enumeration</option>
+                    </select>
+                </div>
+
+                <label class="authorization-check">
+                    <input type="checkbox" name="authorized" value="yes" required>
+                    I confirm that I own this target or have explicit permission to scan it.
+                </label>
+
+                <button type="submit" class="scan-button">
+                    Start Scan
+                </button>
+
+            </form>
+        </section>
+
+        <section class="metric-grid" aria-label="Security metrics">
+            <article class="metric-card">
+                <p>Discovered Assets</p>
+                <h2>--</h2>
+            </article>
+            <article class="metric-card">
+                <p>Open Ports</p>
+                <h2>--</h2>
+            </article>
+            <article class="metric-card">
+                <p>Detected Services</p>
+                <h2>--</h2>
+            </article>
+            <article class="metric-card">
+                <p>Security Findings</p>
+                <h2>--</h2>
+            </article>
+        </section>
+
+        <section class="content-grid">
+            <article class="panel">
+                <div class="panel-header">
+                    <h3>Attack Surface Overview</h3>
+                    <span class="badge">Scanner integration pending</span>
+                </div>
+                <div class="empty-state">
+                    <p>No scan data available yet.<br>Discovered assets and network relationships will appear here once scanning is connected.</p>
+                </div>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header">
+                    <h3>Recent Security Activity</h3>
+                </div>
+                <div class="empty-state">
+                    <p>No scan activity recorded yet.</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="panel scan-history-panel">
+            <div class="panel-header">
+                <h3>Scan History & Results</h3>
+                <span class="badge">Latest 10 scans</span>
+            </div>
+
+            {% if scans %}
+                {% for scan in scans %}
+                    <article class="scan-result">
+                        <div class="scan-result-header">
+                            <div>
+                                <h4>{{ scan.scan_type.replace('_', ' ')|title }}</h4>
+                                <p>Target: {{ scan.target }}</p>
+                                <small>{{ scan.created_at }}</small>
+                            </div>
+                            <span class="badge">{{ scan.status|title }}</span>
+                        </div>
+
+                        <details>
+                            <summary>View scan results</summary>
+                            <pre>{{ scan.results_data|tojson(indent=2) if scan.results_data is not none else 'Results unavailable.' }}</pre>
+                        </details>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No scan history available yet. Your scan results will appear here.</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <footer class="dashboard-footer">
+            ATLAS by The Blue Ocean | Authorized Security Intelligence
+        </footer>
+    </main>
+</body>
+</html>
